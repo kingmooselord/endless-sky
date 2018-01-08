@@ -97,7 +97,6 @@ int main(int argc, char *argv[])
 #endif
 		
 		player.LoadRecent();
-		player.ApplyChanges();
 		
 		// Check how big the window can be.
 		SDL_DisplayMode mode;
@@ -392,7 +391,7 @@ void PrintHelp()
 void PrintVersion()
 {
 	cerr << endl;
-	cerr << "Endless Sky 0.9.7" << endl;
+	cerr << "Endless Sky 0.9.8" << endl;
 	cerr << "License GPLv3+: GNU GPL version 3 or later: <https://gnu.org/licenses/gpl.html>" << endl;
 	cerr << "This is free software: you are free to change and redistribute it." << endl;
 	cerr << "There is NO WARRANTY, to the extent permitted by law." << endl;
@@ -404,25 +403,20 @@ void PrintVersion()
 void SetIcon(SDL_Window *window)
 {
 	// Load the icon file.
-	ImageBuffer *buffer = ImageBuffer::Read(Files::Resources() + "icon.png");
-	if(!buffer)
+	ImageBuffer buffer;
+	if(!buffer.Read(Files::Resources() + "icon.png"))
 		return;
-	if(!buffer->Pixels() || !buffer->Width() || !buffer->Height())
-	{
-		delete buffer;
+	if(!buffer.Pixels() || !buffer.Width() || !buffer.Height())
 		return;
-	}
 	
 	// Convert the icon to an SDL surface.
-	SDL_Surface *surface = SDL_CreateRGBSurfaceFrom(buffer->Pixels(), buffer->Width(), buffer->Height(),
-		32, 4 * buffer->Width(), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	SDL_Surface *surface = SDL_CreateRGBSurfaceFrom(buffer.Pixels(), buffer.Width(), buffer.Height(),
+		32, 4 * buffer.Width(), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 	if(surface)
 	{
 		SDL_SetWindowIcon(window, surface);
 		SDL_FreeSurface(surface);
 	}
-	// Free the image buffer.
-	delete buffer;
 }
 
 
